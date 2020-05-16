@@ -17,12 +17,19 @@ int main()
 	Move.loadFromFile("audio/sfx_wing.wav");
 	MoveSound.setBuffer(Move);
 	
+	bool sol = true;
+	int score = 0;
+
 	sf::Font font;
 	font.loadFromFile("arial.ttf");
 
 	sf::Text text("Space - New Game, Esc - Menu", font, 25);
 	text.setFillColor(sf::Color::White);
 	text.setPosition(5.f, 5.f);
+
+	sf::Text textc("Congratulations", font, 100);
+	textc.setFillColor(sf::Color::Red);
+	textc.setPosition(80.f, 250.f);
 
 	Game game;
 	game.setPosition(50.f, 50.f);
@@ -42,18 +49,22 @@ int main()
 					Menu(window);  
 				if (event.key.code == sf::Keyboard::Left) { 
 					game.Move(Direction::Left); 
+					sol = false;
 					MoveSound.play();
 				}
 				if (event.key.code == sf::Keyboard::Right) { 
 					game.Move(Direction::Right); 
+					sol = false;
 					MoveSound.play();
 				}
 				if (event.key.code == sf::Keyboard::Up) { 
 					game.Move(Direction::Up); 
+					sol = false;
 					MoveSound.play();
 				}
 				if (event.key.code == sf::Keyboard::Down) { 
 					game.Move(Direction::Down); 
+					sol = false;
 					MoveSound.play();
 				}
 
@@ -62,15 +73,23 @@ int main()
 					MoveSound.play();
 					game.Init();
 					move_counter = 100;
+					sol = true;
 				}
 			}
 		}
 		
+
 		if (move_counter-- > 0) //перемешивание плашек
 			game.Move((Direction)(rand() % 4));
 
 		window.clear();
-		window.draw(game);		
+		window.draw(game);	
+
+		if (game.Check() && !sol) {
+			window.draw(textc);
+			score += 100;
+		}
+
 		window.draw(text);	
 		window.display();
 	}
